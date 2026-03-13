@@ -1,0 +1,16 @@
+{
+  "bell_pin": 15,
+  "led_pin": 25,
+  "button_pin": 14,
+  "i2c_sda": 4,
+  "i2c_scl": 5,
+  "ntp_host": "pool.ntp.org",
+  "ntp_interval_hours": 1,
+  "timezone_offset": 19800,
+  "auth_user": "admin",
+  "auth_pass": "admin123",
+  "web_port": 80,
+  "watchdog_timeout_ms": 8388,
+  "allowed_cidr": "0.0.0.0/0",
+  "ntp_use_http": true
+}

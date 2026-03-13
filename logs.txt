@@ -1,0 +1,2 @@
+# SBRR Bell Event Log — v1.0.0
+# Format: YYYY-MM-DD HH:MM:SS | Day HH:MM | Event Name

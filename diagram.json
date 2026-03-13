@@ -10,7 +10,13 @@
       "left": 99.55,
       "attrs": { "env": "micropython-20241129-v1.24.1" }
     },
-    { "type": "wokwi-buzzer", "id": "buzzer1", "top": -160.8, "left": 251.4, "attrs": {} },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer1",
+      "top": -160.8,
+      "left": 251.4,
+      "attrs": {}
+    },
     {
       "type": "wokwi-pushbutton",
       "id": "button1",

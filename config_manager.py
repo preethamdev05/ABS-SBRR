@@ -1,6 +1,7 @@
-# config_manager.py  v2.2.0
-# FIX 6a: default_cfg() allowed_cidr = '0.0.0.0/0'  (was '192.168.1.0/24')
-# FIX 6b: get_wifi() confirmed present and correct — used by wifi_manager.py
+# config_manager.py  v1.0.0
+# Production: AES-128-CBC field encryption for sensitive credentials.
+# Gracefully degrades to plaintext when ucryptolib is absent (Wokwi sim).
+# All accessors always return plaintext; encryption is transparent to callers.
 
 import ujson
 import machine
@@ -9,34 +10,35 @@ import ubinascii
 
 try:
     import ucryptolib
-    _AES_OK = True
+    _AES_AVAILABLE = True
 except ImportError:
-    _AES_OK = False
-    print("CONFIG ucryptolib unavailable — credentials stored plaintext.")
+    _AES_AVAILABLE = False
 
-_CONFIG_FILE   = 'config.json'
-_WIFI_FILE     = 'wifi.json'
-_SALT          = b'SBRRBellv22026'
-_ENC_PREFIX    = 'enc:'
+_CONFIG_FILE    = 'config.json'
+_WIFI_FILE      = 'wifi.json'
+_SALT           = b'SBRRBellV1Prod2026'
+_ENC_PREFIX     = 'enc:'
 _SENSITIVE_CFG  = frozenset(['auth_pass'])
 _SENSITIVE_WIFI = frozenset(['password'])
 
 
-# ── Key derivation ────────────────────────────────────────────────────────────
+# ── Key derivation (device-unique) ───────────────────────────────────────────
+
 def _derive_key() -> bytes:
-    uid = machine.unique_id()   # 8 bytes on RP2350 — device-unique
-    h   = uhashlib.sha256(uid + _SALT)
-    return h.digest()[:16]      # AES-128: 128-bit key
+    uid = machine.unique_id()
+    return uhashlib.sha256(uid + _SALT).digest()[:16]
+
 
 def _derive_iv(key: bytes) -> bytes:
-    h = uhashlib.sha256(key + b'ivbellv2')
-    return h.digest()[:16]
+    return uhashlib.sha256(key + b'ivv1prod').digest()[:16]
 
 
-# ── PKCS7 padding ─────────────────────────────────────────────────────────────
+# ── PKCS7 padding ────────────────────────────────────────────────────────────
+
 def _pad(data: bytes) -> bytes:
     n = 16 - (len(data) % 16)
     return data + bytes([n] * n)
+
 
 def _unpad(data: bytes) -> bytes:
     if not data:
@@ -47,24 +49,26 @@ def _unpad(data: bytes) -> bytes:
     return data[:-n]
 
 
-# ── Field-level AES-128-CBC encrypt / decrypt ─────────────────────────────────
+# ── AES-128-CBC encrypt / decrypt ────────────────────────────────────────────
+
 def _encrypt(value: str) -> str:
-    if not _AES_OK or not value:
+    if not _AES_AVAILABLE or not value:
         return value
     try:
         key    = _derive_key()
         iv     = _derive_iv(key)
-        cipher = ucryptolib.aes(key, 2, iv)   # mode 2 = CBC
+        cipher = ucryptolib.aes(key, 2, iv)
         ct     = cipher.encrypt(_pad(value.encode()))
         return _ENC_PREFIX + ubinascii.b2a_base64(ct).decode().strip()
     except Exception as e:
-        print(f"CONFIG Encrypt error: {e}")
+        print(f'CONFIG encrypt error: {e}')
         return value
+
 
 def _decrypt(value: str) -> str:
     if not isinstance(value, str) or not value.startswith(_ENC_PREFIX):
-        return value    # plaintext: legacy install or AES unavailable
-    if not _AES_OK:
+        return value
+    if not _AES_AVAILABLE:
         return value
     try:
         key    = _derive_key()
@@ -73,89 +77,106 @@ def _decrypt(value: str) -> str:
         ct     = ubinascii.a2b_base64(value[len(_ENC_PREFIX):])
         return _unpad(cipher.decrypt(ct)).decode()
     except Exception as e:
-        print(f"CONFIG Decrypt error: {e}")
-        return value   # fallback — handles migration edge case
+        print(f'CONFIG decrypt error: {e}')
+        return value
 
 
 # ── ConfigManager ─────────────────────────────────────────────────────────────
+
 class ConfigManager:
     def __init__(self):
         self.cfg  = {}
         self.wifi = {}
         self.load()
 
+    # ── Defaults ─────────────────────────────────────────────────────────────
+
     @staticmethod
     def _default_cfg() -> dict:
         return {
-            'bell_pin': 15, 'led_pin': 25, 'button_pin': 14,
-            'i2c_sda': 4,   'i2c_scl': 5,
-            'ntp_host': 'pool.ntp.org', 'ntp_interval_hours': 1,
-            'timezone_offset': 19800,
-            'auth_user': 'admin', 'auth_pass': 'admin123',
-            'web_port': 80, 'watchdog_timeout_ms': 8388,
-            'allowed_cidr': '0.0.0.0/0',   # FIX 6a: allow all — works in Wokwi + physical
+            'bell_pin':            15,
+            'led_pin':             25,
+            'button_pin':          14,
+            'i2c_sda':             4,
+            'i2c_scl':             5,
+            'ntp_host':            'pool.ntp.org',
+            'ntp_interval_hours':  1,
+            'timezone_offset':     19800,
+            'auth_user':           'admin',
+            'auth_pass':           'admin123',
+            'web_port':            80,
+            'watchdog_timeout_ms': 8388,
+            'allowed_cidr':        '0.0.0.0/0',
         }
 
     @staticmethod
     def _default_wifi() -> dict:
         return {
-            'ssid': '', 'password': '',
-            'ap_ssid': 'SBRRBellAP', 'ap_password': 'bellsystem',
+            'ssid':        '',
+            'password':    '',
+            'ap_ssid':     'SBRRBell_AP',
+            'ap_password': 'bellsystem',
         }
 
+    # ── Load / Save ──────────────────────────────────────────────────────────
+
     def load(self):
-        for attr, fname, default, sensitive in [
+        sources = [
             ('cfg',  _CONFIG_FILE, self._default_cfg(),  _SENSITIVE_CFG),
             ('wifi', _WIFI_FILE,   self._default_wifi(), _SENSITIVE_WIFI),
-        ]:
+        ]
+        for attr, fname, default, sensitive in sources:
             try:
                 with open(fname, 'r') as f:
                     raw = ujson.load(f)
                 for k in sensitive:
                     if k in raw:
                         raw[k] = _decrypt(raw[k])
-                setattr(self, attr, raw)
+                # Merge with defaults so new keys are always present
+                merged = dict(default)
+                merged.update(raw)
+                setattr(self, attr, merged)
             except Exception as e:
-                print(f"CONFIG {fname} load error: {e}. Using defaults.")
-                setattr(self, attr, default)
+                print(f'CONFIG load {fname}: {e} — using defaults')
+                setattr(self, attr, dict(default))
 
     def save(self):
         try:
             out = dict(self.cfg)
             for k in _SENSITIVE_CFG:
-                if k in out:
+                if k in out and out[k]:
                     out[k] = _encrypt(out[k])
             with open(_CONFIG_FILE, 'w') as f:
                 ujson.dump(out, f)
         except Exception as e:
-            print(f"CONFIG Save error: {e}")
+            print(f'CONFIG save error: {e}')
 
     def save_wifi(self):
         try:
             out = dict(self.wifi)
             for k in _SENSITIVE_WIFI:
-                if k in out:
+                if k in out and out[k]:
                     out[k] = _encrypt(out[k])
             with open(_WIFI_FILE, 'w') as f:
                 ujson.dump(out, f)
         except Exception as e:
-            print(f"CONFIG WiFi save error: {e}")
+            print(f'CONFIG wifi save error: {e}')
 
-    # ── Accessors (always return plaintext) ───────────────────────────────────
+    # ── Accessors (always return plaintext) ──────────────────────────────────
+
     def get(self, key, default=None):
-        """Read from config.json dict."""
         return self.cfg.get(key, default)
 
     def get_wifi(self, key, default=None):
-        """Read from wifi.json dict. FIX 6b: used by wifi_manager.py for all WiFi keys."""
         return self.wifi.get(key, default)
 
     def get_all(self) -> dict:
-        """Return full cfg dict (plaintext). Caller must pop auth_pass before sending over API."""
+        """Returns full cfg dict in plaintext. Caller must strip auth_pass before API responses."""
         return dict(self.cfg)
 
+    # ── Mutators ─────────────────────────────────────────────────────────────
+
     def update(self, key, value):
-        """Store plaintext in memory; encrypt on disk write."""
         self.cfg[key] = value
         self.save()
 
