@@ -1,0 +1,52 @@
+[wokwi]
+version = 1
+firmware = "firmware.uf2"
+python = true
+
+[[file]]
+name = "main.py"
+path = "main.py"
+
+[[file]]
+name = "bell_controller.py"
+path = "bell_controller.py"
+
+[[file]]
+name = "config_manager.py"
+path = "config_manager.py"
+
+[[file]]
+name = "config.json"
+path = "config.json"
+
+[[file]]
+name = "ntp_sync.py"
+path = "ntp_sync.py"
+
+[[file]]
+name = "rtc_sync.py"
+path = "rtc_sync.py"
+
+[[file]]
+name = "schedule_manager.py"
+path = "schedule_manager.py"
+
+[[file]]
+name = "web_server.py"
+path = "web_server.py"
+
+[[file]]
+name = "wifi_manager.py"
+path = "wifi_manager.py"
+
+[[file]]
+name = "schedule.json"
+path = "schedule.json"
+
+[[file]]
+name = "wifi.json"
+path = "wifi.json"
+
+[[file]]
+name = "dashboard.html"
+path = "dashboard.html"
