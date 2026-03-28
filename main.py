@@ -1,6 +1,6 @@
 # main.py  v3.0.0
 # Production entry point for SBRR Mahajana Bell Automation System.
-# Runs on Raspberry Pi Pico W (RP2350) with MicroPython v1.24+.
+# Runs on Raspberry Pi Pico 2 W (RP2350) with MicroPython v1.24+.
 #
 # Boot sequence:
 #   1. Filesystem defaults written if absent

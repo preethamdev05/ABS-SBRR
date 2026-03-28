@@ -1,5 +1,5 @@
 # rtc_sync.py  v1.0.0
-# DS3231 RTC driver for Raspberry Pi Pico W (MicroPython).
+# DS3231 RTC driver for Raspberry Pi Pico 2 W (MicroPython).
 # I2C address: 0x68 (fixed).
 #
 # Features:

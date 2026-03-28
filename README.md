@@ -1,6 +1,6 @@
 # ABS-SBRR v3 — Automated Bell System for Schools
 
-Raspberry Pi Pico W (RP2350) + MicroPython v1.24+
+Raspberry Pi Pico 2 W (RP2350) + MicroPython v1.24+
 
 ## Features
 

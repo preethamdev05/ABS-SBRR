@@ -1,5 +1,5 @@
 # web_server.py  v3.0.0
-# Production: Non-blocking single-connection HTTP server on RP2350/Pico W.
+# Production: Non-blocking single-connection HTTP server on RP2350/Pico 2 W.
 # Auth: nonce-based SHA-256 challenge with per-login nonce rotation.
 # Security: rate limiting, token TTL, CIDR ACL, password-stripped backups.
 # UI:   Compressed dashboard.txt.gz served with Content-Encoding: gzip.
