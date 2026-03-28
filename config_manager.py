@@ -113,7 +113,6 @@ class ConfigManager:
             'token_ttl_seconds':   86400,
             'login_max_attempts':  5,
             'login_lockout_secs':  60,
-            'rtc_enabled':         True,
         }
 
     @staticmethod
