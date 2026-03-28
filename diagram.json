@@ -4,7 +4,7 @@
   "editor": "wokwi",
   "parts": [
     {
-      "type": "wokwi-pi-pico-w",
+      "type": "board-pi-pico-w",
       "id": "pico",
       "top": 0,
       "left": 0,
@@ -25,20 +25,6 @@
       "attrs": { "color": "red" }
     },
     {
-      "type": "wokwi-resistor",
-      "id": "r2",
-      "top": -100,
-      "left": 280,
-      "attrs": { "resistance": "220" }
-    },
-    {
-      "type": "wokwi-led",
-      "id": "status_led",
-      "top": -160,
-      "left": 280,
-      "attrs": { "color": "green" }
-    },
-    {
       "type": "wokwi-buzzer",
       "id": "buzzer1",
       "top": -160,
@@ -51,20 +37,6 @@
       "top": 100,
       "left": 300,
       "attrs": { "color": "red", "label": "RING" }
-    },
-    {
-      "type": "wokwi-7segment",
-      "id": "display1",
-      "top": -180,
-      "left": 480,
-      "attrs": { "color": "yellow" }
-    },
-    {
-      "type": "wokwi-pushbutton",
-      "id": "button2",
-      "top": 100,
-      "left": 400,
-      "attrs": { "color": "blue", "label": "BOOT" }
     }
   ],
   "connections": [
@@ -72,18 +44,11 @@
     ["r1:2", "bell_led:A", "green", []],
     ["bell_led:C", "pico:GND.1", "black", []],
 
-    ["pico:GP25", "r2:1", "green", []],
-    ["r2:2", "status_led:A", "green", []],
-    ["status_led:C", "pico:GND.2", "black", []],
-
     ["pico:GP15", "buzzer1:1", "green", []],
-    ["buzzer1:2", "pico:GND.3", "black", []],
+    ["buzzer1:2", "pico:GND.2", "black", []],
 
     ["pico:GP14", "button1:1.l", "blue", []],
-    ["pico:GND.4", "button1:2.l", "black", []],
-
-    ["pico:GP14", "button2:1.l", "purple", []],
-    ["pico:GND.5", "button2:2.l", "black", []]
+    ["pico:GND.3", "button1:2.l", "black", []]
   ],
   "dependencies": {}
 }
