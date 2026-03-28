@@ -48,5 +48,5 @@ name = "wifi.json"
 path = "wifi.json"
 
 [[file]]
-name = "dashboard.html"
-path = "dashboard.html"
+name = "dashboard.txt"
+path = "dashboard.txt"
