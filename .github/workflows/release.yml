@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - ".github/**"
+      - "README.md"
+      - ".gitignore"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get next version
+        id: version
+        run: |
+          # Use run number as version tag
+          TAG="v3.0.${{ github.run_number }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Next tag: $TAG"
+
+      - name: Build release zip
+        run: |
+          mkdir -p dist
+          cp *.py *.json dashboard.html dist/
+          cd dist && zip -r ../ABS-SBRR-${{ steps.version.outputs.tag }}.zip .
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ABS-SBRR ${{ steps.version.outputs.tag }}
+          body: |
+            Auto-generated release.
+
+            ### Files
+            All `.py`, `.json`, and `dashboard.html` included.
+            Upload the zip contents directly to your Pico W.
+
+            ### Changes
+            See [commit history](https://github.com/preethamdev05/ABS-SBRR/commits/main) for details.
+          files: ABS-SBRR-*.zip
+          generate_release_notes: true
