@@ -106,8 +106,6 @@ def _load_dashboard():
             pass
 
     print('WEB No dashboard file found — dashboard will not be served.')
-    except Exception as e:
-        print(f'WEB Dashboard compress error: {e}')
 
 
 class WebServer:
