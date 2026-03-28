@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "author": "preetham dev",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-pi-pico-w",
+      "id": "pico",
+      "top": -128.05,
+      "left": 99.55,
+      "attrs": { "env": "micropython-20241129-v1.24.1" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer1",
+      "top": -160.8,
+      "left": 251.4,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "button1",
+      "top": -41.8,
+      "left": 288,
+      "attrs": { "color": "red" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP15", "buzzer1:1", "green", [] ],
+    [ "pico:GND.1", "buzzer1:2", "black", [] ],
+    [ "pico:GP14", "button1:1.l", "blue", [] ],
+    [ "pico:GND.2", "button1:2.l", "black", [] ]
+  ],
+  "dependencies": {}
+}

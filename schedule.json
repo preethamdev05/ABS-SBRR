@@ -1,0 +1,413 @@
+{
+  "holidays": [],
+  "schedule": {
+    "Monday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 First Period",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "Second Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "Third Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "Tea Break End",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "Afternoon Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "Last Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ],
+    "Tuesday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 First Period",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "Second Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "Third Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "Tea Break End",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "Afternoon Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "Last Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ],
+    "Wednesday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 DS using Python",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "English Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "IRC Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "English Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "COI Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "Last Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ],
+    "Thursday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 LAB DS Python",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "LAB DS Python Continues",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "Kannada Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "COI Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "Last Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ],
+    "Friday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 Kannada",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "P&S Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "COI Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "DS using Python",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "LAB DS Python Start",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "LAB DS Python",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "LAB DS Python End",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ],
+    "Saturday": [
+      {
+        "time": "08:45",
+        "event_name": "Day Start \u2013 LAB DS Python",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 5
+      },
+      {
+        "time": "09:45",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "10:40",
+        "event_name": "P&S Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "11:35",
+        "event_name": "Tea Break",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "11:45",
+        "event_name": "DS using Python",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "12:40",
+        "event_name": "Lunch Break",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 7
+      },
+      {
+        "time": "13:35",
+        "event_name": "Lunch Break End",
+        "bell_pattern": "double_ring",
+        "duration_seconds": 4
+      },
+      {
+        "time": "14:20",
+        "event_name": "Afternoon Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "15:15",
+        "event_name": "Period Change",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:10",
+        "event_name": "Last Period",
+        "bell_pattern": "single_ring",
+        "duration_seconds": 3
+      },
+      {
+        "time": "16:30",
+        "event_name": "Day End",
+        "bell_pattern": "long_ring",
+        "duration_seconds": 8
+      }
+    ]
+  }
+}
