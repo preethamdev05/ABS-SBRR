@@ -13,15 +13,49 @@ Raspberry Pi Pico 2 W (RP2350) + MicroPython v1.24+
 
 ## Hardware
 
-| Component | Pin | Pico W Physical |
-|-----------|-----|-----------------|
-| Bell relay | GP15 | Pin 20 |
+### Pico 2 W Pin Assignments
+
+| Component | GPIO | Physical Pin |
+|-----------|------|--------------|
+| Bell (MOSFET gate) | GP15 | Pin 20 |
 | Manual button | GP14 | Pin 19 |
 | Status LED | GP25 | Built-in |
 | RTC SDA | GP4 | Pin 6 |
 | RTC SCL | GP5 | Pin 7 |
-| RTC VCC | 3V3 | Pin 36 |
-| RTC GND | GND | Pin 38 |
+
+### DS3231 RTC Wiring
+
+| DS3231 | Pico 2 W | Physical Pin |
+|--------|----------|--------------|
+| VCC | 3V3(OUT) | Pin 36 |
+| GND | GND | Pin 38 |
+| SDA | GP4 | Pin 6 |
+| SCL | GP5 | Pin 7 |
+
+### 12V Bell Wiring (MOSFET — IRLZ44N)
+
+```
+12V PSU (+) ●───────────────► Bell (+)
+
+12V PSU (−) ●───────────────► IRLZ44N Source ◄──── Pico GND (Pin 38)
+
+Bell (−)    ●───────────────► IRLZ44N Drain
+
+Pico GP15   ●──┤220Ω├──────► IRLZ44N Gate
+
+Flyback diode (1N4007) across Bell terminals:
+  Cathode (stripe) → Bell (+)
+  Anode            → Bell (−)
+```
+
+| Part | Value |
+|------|-------|
+| MOSFET | IRLZ44N (logic-level N-channel) |
+| Gate resistor | 220Ω ¼W |
+| Flyback diode | 1N4007 |
+| Bell PSU | 12V DC adapter |
+
+**Why MOSFET over relay:** Silent, no mechanical wear, supports fast patterns (double/triple ring), cheaper, smaller.
 
 ## Boot Modes
 
@@ -57,7 +91,7 @@ Connect to `SBRRBell_AP` → open `http://192.168.4.1` → login (admin/admin123
 | `rtc_sync.py` | DS3231 I2C driver |
 | `ntp_sync.py` | NTP/HTTP time sync |
 | `wifi_manager.py` | STA/AP WiFi management |
-| `bell_controller.py` | Bell relay + patterns |
+| `bell_controller.py` | Bell MOSFET control + patterns |
 | `schedule_manager.py` | Schedule logic |
 | `web_server.py` | HTTP dashboard server |
 | `config_manager.py` | Config + encrypted storage |
