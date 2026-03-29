@@ -103,6 +103,7 @@ class ConfigManager:
             'ntp_host':            'pool.ntp.org',
             'ntp_interval_hours':  1,
             'timezone_offset':     19800,
+            'timezone_name':       'Asia/Kolkata',
             'auth_user':           'admin',
             'auth_pass':           'admin123',
             'web_port':            80,

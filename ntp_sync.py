@@ -26,13 +26,17 @@ _RECV_TIMEOUT_MS = const(4000)
 
 _HTTP_HOST = 'worldtimeapi.org'
 _HTTP_PORT = const(80)
-_HTTP_REQ  = (
-    b'GET /api/timezone/Asia/Kolkata HTTP/1.0\r\n'
-    b'Host: worldtimeapi.org\r\n'
-    b'Accept: application/json\r\n'
-    b'Connection: close\r\n'
-    b'\r\n'
-)
+
+
+def _build_http_req(timezone_name: str) -> bytes:
+    path = f'/api/timezone/{timezone_name}'.encode()
+    return (
+        b'GET ' + path + b' HTTP/1.0\r\n'
+        b'Host: worldtimeapi.org\r\n'
+        b'Accept: application/json\r\n'
+        b'Connection: close\r\n'
+        b'\r\n'
+    )
 
 _IDLE    = const(0)
 _SENDING = const(1)
@@ -73,6 +77,9 @@ class NTPSync:
         if wdt:
             wdt.feed()   # fed after DNS (DNS can take up to ~2 s)
 
+        timezone_name = self._cfg.get('timezone_name', 'Asia/Kolkata')
+        http_req = _build_http_req(timezone_name)
+
         s = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM)
         s.settimeout(4)
         buf = bytearray()
@@ -80,7 +87,7 @@ class NTPSync:
             s.connect(addr)
             if wdt:
                 wdt.feed()   # fed after TCP connect
-            s.send(_HTTP_REQ)
+            s.send(http_req)
             while True:
                 try:
                     chunk = s.recv(512)

@@ -12,7 +12,7 @@ from micropython import const
 PATTERNS = {
     'single_ring':    [(1.0,  0.0)],
     'double_ring':    [(0.45, 0.1),  (0.45, 0.0)],
-    'long_ring':      [(1.0,  0.0)],
+    'long_ring':      [(0.85, 0.15)],
     'triple_ring':    [(0.28, 0.08), (0.28, 0.08), (0.28, 0.0)],
     'custom_pattern': [(0.40, 0.10), (0.15, 0.10), (0.25, 0.0)],
 }

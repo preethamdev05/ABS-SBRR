@@ -156,8 +156,24 @@ class WebServer:
     # ── IP ACL ────────────────────────────────────────────────────────────────
 
     def _ip_allowed(self, ip: str) -> bool:
+        # Always allow AP subnet
+        if _cidr_allows(ip, '192.168.4.0/24'):
+            return True
+        # Check configured CIDR
         cidr = self._cfg.get('allowed_cidr', '0.0.0.0/0')
-        return _cidr_allows(ip, cidr)
+        if _cidr_allows(ip, cidr):
+            return True
+        # Auto-allow same /24 subnet as the device's own STA IP
+        sta_ip = self._wifi.get_ip()
+        if sta_ip and sta_ip != '0.0.0.0' and sta_ip != '192.168.4.1':
+            try:
+                parts = sta_ip.split('.')
+                sta_cidr = f'{parts[0]}.{parts[1]}.{parts[2]}.0/24'
+                if _cidr_allows(ip, sta_cidr):
+                    return True
+            except Exception:
+                pass
+        return False
 
     # ── Cooperative poll — called every loop cycle ────────────────────────────
 
@@ -309,16 +325,6 @@ class WebServer:
             f'Content-Type: text/plain; charset=utf-8\r\n'
             f'Content-Length: {len(b)}\r\n'
             f'{self._cors_headers()}\r\n'
-        ).encode()
-        conn.send(header)
-        conn.send(b)
-
-    def _send_html(self, conn, html: str):
-        b      = html.encode('utf-8')
-        header = (
-            f'HTTP/1.1 200 OK\r\n'
-            f'Content-Type: text/html; charset=utf-8\r\n'
-            f'Content-Length: {len(b)}\r\n\r\n'
         ).encode()
         conn.send(header)
         conn.send(b)
@@ -588,7 +594,7 @@ class WebServer:
                           'allowed_cidr', 'max_bell_duration',
                           'login_max_attempts', 'login_lockout_secs',
                           'token_ttl_seconds', 'web_port',
-                          'watchdog_timeout_ms'):
+                          'watchdog_timeout_ms', 'timezone_name'):
                     if k in d and d[k] not in ('', None):
                         updates[k] = d[k]
                 # NTP mode toggle
