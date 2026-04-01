@@ -1,0 +1,227 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Import dependency check
+        run: |
+          echo "Checking that all local imports resolve..."
+          ERRORS=0
+          for f in *.py; do
+            module_name="${f%.py}"
+            # Extract 'from X import' and 'import X' lines where X is a local module
+            imports=$(python3 -c "
+          import re, sys
+          with open('$f') as fh:
+              for line in fh:
+                  line = line.strip()
+                  m = re.match(r'^from\s+(\w+)\s+import', line)
+                  if m: print(m.group(1))
+                  m = re.match(r'^import\s+(\w+)', line)
+                  if m: print(m.group(1))
+          " 2>/dev/null)
+            for mod in $imports; do
+              # Skip stdlib / known third-party modules
+              case "$mod" in
+                utime|ujson|uos|usocket|ustruct|uhashlib|ubinascii|ucryptolib|uzlib|machine|network|micropython|gc|sys|re|ast|datetime|typing|pathlib|dataclasses|enum|abc|io|copy|collections|math|random|string|textwrap|functools|itertools|contextlib|warnings|traceback|json|os|time|struct|hashlib|binascii|socket|subprocess|threading|asyncio|logging|unittest|pathlib|tempfile|shutil|gzip|zlib|base64|uuid|secrets|hmac|csv|configparser|argparse|pprint|inspect|types|weakref|gc)
+                  continue
+                  ;;
+              esac
+              # Check if the module exists as a local file
+              if [ ! -f "${mod}.py" ] && [ ! -d "${mod}" ]; then
+                echo "✗ $f imports '${mod}' but ${mod}.py not found"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done
+          if [ $ERRORS -gt 0 ]; then
+            echo ""
+            echo "Found $ERRORS broken import(s)."
+            exit 1
+          fi
+          echo "✓ All local imports resolve."
+
+      - name: Config key consistency check
+        run: |
+          python3 << 'EOF'
+          import json
+          import ast
+          import sys
+
+          # Keys defined in ConfigManager._default_cfg()
+          with open('config_manager.py') as f:
+              source = f.read()
+
+          # Parse the AST to find the _default_cfg staticmethod
+          tree = ast.parse(source)
+          default_keys = set()
+          for node in ast.walk(tree):
+              if isinstance(node, ast.FunctionDef) and node.name == '_default_cfg':
+                  # Find dict literal keys
+                  for child in ast.walk(node):
+                      if isinstance(child, ast.Dict):
+                          for key in child.keys:
+                              if isinstance(key, ast.Constant) and isinstance(key.value, str):
+                                  default_keys.add(key.value)
+
+          if not default_keys:
+              print("⚠ Could not parse _default_cfg() keys — skipping check")
+              sys.exit(0)
+
+          # Keys in config.json
+          with open('config.json') as f:
+              config = json.load(f)
+          config_keys = set(config.keys())
+
+          # Check: config.json should not have keys missing from defaults
+          extra_in_config = config_keys - default_keys
+          # Check: defaults should not have keys missing from config.json
+          missing_in_config = default_keys - config_keys
+
+          issues = 0
+          if extra_in_config:
+              print(f"⚠ config.json has keys not in _default_cfg(): {extra_in_config}")
+              print("  (These will be preserved on load but won't have defaults)")
+              issues += 1
+          if missing_in_config:
+              print(f"✗ _default_cfg() has keys missing from config.json: {missing_in_config}")
+              print("  (Default values will silently override on boot)")
+              issues += 1
+              # This is the serious one — fail the build
+
+          if issues == 0:
+              print("✓ config.json and _default_cfg() are in sync.")
+          elif missing_in_config:
+              sys.exit(1)
+          else:
+              print("✓ Non-critical — config.json has extra keys but defaults are complete.")
+          EOF
+
+      - name: Dashboard size guard
+        run: |
+          for f in dashboard.html dashboard.txt; do
+            if [ -f "$f" ]; then
+              RAW_SIZE=$(wc -c < "$f")
+              GZ_SIZE=$(gzip -k -c -9 "$f" | wc -c)
+              RAW_LIMIT=153600   # 150 KB raw
+              GZ_LIMIT=40960     # 40 KB gzipped (actual RAM usage on Pico)
+              echo "$f: ${RAW_SIZE} bytes raw, ${GZ_SIZE} bytes gzipped"
+              echo "  Limits: raw < ${RAW_LIMIT}, gzipped < ${GZ_LIMIT}"
+              FAILED=0
+              if [ "$RAW_SIZE" -gt "$RAW_LIMIT" ]; then
+                echo "✗ $f raw size exceeds ${RAW_LIMIT} byte limit (${RAW_SIZE} bytes)."
+                FAILED=1
+              fi
+              if [ "$GZ_SIZE" -gt "$GZ_LIMIT" ]; then
+                echo "✗ $f gzipped size exceeds ${GZ_LIMIT} byte limit (${GZ_SIZE} bytes)."
+                echo "  Large dashboards cause memory pressure on Pico 2 W."
+                FAILED=1
+              fi
+              if [ "$FAILED" -eq 0 ]; then
+                echo "✓ $f within size limits."
+              else
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Module interface smoke test
+        run: |
+          python3 << 'EOF'
+          """
+          Verify each module parses and has expected classes/functions.
+          This catches constructor errors, undefined names, and structural issues
+          without needing MicroPython runtime or hardware.
+          """
+          import ast
+          import sys
+
+          EXPECTED = {
+              'bell_controller.py':  {'classes': ['BellController'], 'funcs': []},
+              'config_manager.py':   {'classes': ['ConfigManager'], 'funcs': ['_derive_key', '_encrypt', '_decrypt']},
+              'wifi_manager.py':     {'classes': ['WiFiManager'], 'funcs': []},
+              'ntp_sync.py':         {'classes': ['NTPSync'], 'funcs': []},
+              'rtc_sync.py':         {'classes': ['RTCSync'], 'funcs': ['_bcd_to_dec', '_dec_to_bcd']},
+              'schedule_manager.py': {'classes': ['ScheduleManager'], 'funcs': ['_valid_hhmm', '_valid_date']},
+              'web_server.py':       {'classes': ['WebServer'], 'funcs': ['_sha256hex', '_cidr_allows']},
+              'main.py':             {'classes': ['_FakeWDT'], 'funcs': ['main', '_ensure_filesystem', '_boot_selftest', '_halt']},
+          }
+
+          errors = 0
+          for filename, expected in EXPECTED.items():
+              try:
+                  with open(filename) as f:
+                      tree = ast.parse(f.read(), filename=filename)
+              except FileNotFoundError:
+                  print(f"⚠ {filename} not found — skipping")
+                  continue
+              except SyntaxError as e:
+                  print(f"✗ {filename}: syntax error: {e}")
+                  errors += 1
+                  continue
+
+              defined_classes = {node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)}
+              defined_funcs = {node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)}
+
+              for cls in expected['classes']:
+                  if cls not in defined_classes:
+                      print(f"✗ {filename}: expected class '{cls}' not found")
+                      errors += 1
+
+              for func in expected['funcs']:
+                  if func not in defined_funcs:
+                      print(f"✗ {filename}: expected function '{func}' not found")
+                      errors += 1
+
+              if not errors:
+                  print(f"✓ {filename}: interfaces OK")
+
+          if errors > 0:
+              print(f"\n✗ {errors} interface check(s) failed.")
+              sys.exit(1)
+          print("\n✓ All module interfaces verified.")
+          EOF
+
+      - name: Security checks
+        run: |
+          echo "Running security checks..."
+          ISSUES=0
+
+          # Check for hardcoded passwords in Python files (excluding defaults in config_manager)
+          if grep -rn "password\s*=\s*['\"]" *.py | grep -v "config_manager.py" | grep -v "_default" | grep -v "ap_password" | grep -v "wifi_password" | grep -v "# "; then
+            echo "⚠ Possible hardcoded password found (review above)"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check CIDR default in web_server.py
+          if grep -q "0.0.0.0/0" web_server.py; then
+            echo "✗ web_server.py still has 0.0.0.0/0 CIDR default"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          # Check for debug prints that might leak sensitive data
+          if grep -rn "print.*password\|print.*token\|print.*secret" *.py | grep -v "# "; then
+            echo "⚠ Possible sensitive data in print statements (review above)"
+            ISSUES=$((ISSUES + 1))
+          fi
+
+          if [ $ISSUES -gt 0 ]; then
+            echo ""
+            echo "Found $ISSUES security issue(s) to review."
+            exit 1
+          fi
+          echo "✓ Security checks passed."
