@@ -83,6 +83,24 @@ Key settings: `bell_pin`, `i2c_sda`, `i2c_scl`, `timezone_offset` (19800 = IST),
 
 Connect to `SBRRBell_AP` → open `http://192.168.4.1` → login (admin/admin123).
 
+## Security Model
+
+**This is a local-network device.** The web dashboard has no TLS — all traffic including login is plaintext HTTP.
+
+Auth uses a SHA-256 nonce challenge:
+- Client never sends the password — it sends `SHA256(user + SHA256(password) + nonce)`
+- Server compares against its own computation
+- Nonce rotates on each successful login
+- Rate limiting: 5 failed attempts → 60s lockout
+- Session tokens expire after 24 hours (configurable)
+
+**Threat model:** This protects against casual unauthorized access on the school network. It does NOT protect against:
+- Network eavesdroppers (no TLS)
+- Replay of captured auth tokens (until nonce rotation or token expiry)
+- Physical access to the device
+
+**Recommendation:** Use AP mode (direct hotspot) rather than bridging to the school LAN for better isolation. Change the default password immediately after first boot.
+
 ## Files
 
 | File | Purpose |

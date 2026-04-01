@@ -245,8 +245,14 @@ def main():
             print(f'WARN Transient OSError #{transient_streak}: {e}')
             if transient_streak >= _MAX_TRANSIENT_STREAK:
                 _halt(f'OSError streak limit ({_MAX_TRANSIENT_STREAK}) reached')
-        except Exception as e:
+        except MemoryError as e:
             _halt(f'{type(e).__name__}: {e}')
+        except Exception as e:
+            transient_streak += 1
+            print(f'WARN Exception #{transient_streak}: {type(e).__name__}: {e}')
+            if transient_streak >= _MAX_TRANSIENT_STREAK:
+                _halt(f'Exception streak limit ({_MAX_TRANSIENT_STREAK}) reached')
+            gc.collect()
 
         # ── WDT fed exactly once per cycle ────────────────────────────────
         wdt.feed()

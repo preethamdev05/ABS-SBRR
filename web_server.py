@@ -160,7 +160,7 @@ class WebServer:
         if _cidr_allows(ip, '192.168.4.0/24'):
             return True
         # Check configured CIDR
-        cidr = self._cfg.get('allowed_cidr', '0.0.0.0/0')
+        cidr = self._cfg.get('allowed_cidr', '192.168.4.0/24')
         if _cidr_allows(ip, cidr):
             return True
         # Auto-allow same /24 subnet as the device's own STA IP

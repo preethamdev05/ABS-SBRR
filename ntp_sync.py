@@ -162,7 +162,7 @@ class NTPSync:
             self._addr = None
             return False
         finally:
-            if s:
+            if s is not None:
                 try:
                     s.close()
                 except Exception:

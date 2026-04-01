@@ -126,8 +126,11 @@ class WiFiManager:
                 ap_pass = ubinascii.hexlify(uos.urandom(4)).decode()
             except Exception:
                 ap_pass = hex(machine.unique_id()[-1] ^ 0xAB)[2:].zfill(8)
-            self._cfg.update_wifi(ap_ssid, ap_pass)
             print(f'WIFI Generated AP password: {ap_pass}')
+        # Don't persist AP password to wifi.json — it regenerates each boot.
+        # Saving here would overwrite the STA password field.
+        self._cfg.wifi['ap_ssid'] = ap_ssid
+        self._cfg.wifi['ap_password'] = ap_pass
         self._ap = network.WLAN(network.AP_IF)
         self._ap.active(True)
         self._ap.config(ssid=ap_ssid, password=ap_pass, security=3)
