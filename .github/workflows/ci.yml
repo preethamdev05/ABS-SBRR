@@ -214,7 +214,10 @@ jobs:
           fi
 
           # Check for debug prints that might leak sensitive data
-          if grep -rn "print.*password\|print.*token\|print.*secret" *.py | grep -v "# "; then
+          # Whitelist: AP password print is intentional (operator needs it on serial)
+          if grep -rn "print.*password\|print.*token\|print.*secret" *.py \
+            | grep -v "# " \
+            | grep -v "Generated AP password"; then
             echo "⚠ Possible sensitive data in print statements (review above)"
             ISSUES=$((ISSUES + 1))
           fi
