@@ -1,6 +1,6 @@
 # config_manager.py  v2.0.0
 # Production: AES-128-CBC field encryption for sensitive credentials.
-# Gracefully degrades to plaintext when ucryptolib is absent (Wokwi sim).
+# Gracefully degrades to plaintext when ucryptolib is unavailable.
 # All accessors always return plaintext; encryption is transparent to callers.
 
 import ujson

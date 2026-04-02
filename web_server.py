@@ -80,8 +80,7 @@ _DASHBOARD_GZ = None  # populated by _load_dashboard()
 
 
 def _load_dashboard():
-    """Load pre-compressed .gz or fall back to compressing source file.
-    Tries dashboard.html first (local), then dashboard.txt (Wokwi)."""
+    """Load pre-compressed .gz or fall back to compressing dashboard.html."""
     global _DASHBOARD_GZ
     # 1. Try pre-compressed file (.html.gz or .txt.gz)
     for gz in ('dashboard.html.gz', 'dashboard.txt.gz'):

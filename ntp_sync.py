@@ -1,6 +1,6 @@
 # ntp_sync.py  v2.0.0
-# Two-mode time sync: UDP NTP (physical) and HTTP worldtimeapi.org (Wokwi).
-# Wokwi blocks UDP port 123 — set "ntp_use_http": true in config.json.
+# Two-mode time sync: UDP NTP (primary) and HTTP worldtimeapi.org (fallback).
+# Set "ntp_use_http": true in config.json to force HTTP mode.
 #
 # Boot path: sync(wdt)
 #   - WDT fed at entry, after DNS, after HTTP connect, after recv — every

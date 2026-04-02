@@ -7,7 +7,7 @@
 #   2. ConfigManager loads config.json + wifi.json
 #   3. BellController initialised (IRQ registered)
 #   4. Boot self-test (LED blink + 200 ms beep) — before WDT is armed
-#   5. WDT armed (FakeWDT stub used in Wokwi where WDT is unavailable)
+#   5. WDT armed
 #   6. WiFi connect (wdt-safe polling, 15 s budget)
 #   7. NTP sync (blocking, 3 s socket timeout) → writes back to RTC on success
 #   8. RTC fallback: if NTP failed, restore time from DS3231
@@ -41,7 +41,7 @@ _MAX_TRANSIENT_STREAK = const(20)
 _GC_INTERVAL_CYCLES   = const(50)
 
 
-# ── WDT stub — Wokwi does not support machine.WDT ────────────────────────────
+# ── WDT stub ──────────────────────────────────────────────────────────────────
 
 class _FakeWDT:
     def feed(self):
@@ -55,7 +55,7 @@ def _ensure_filesystem(cfg_defaults: dict):
     defaults = {
         'config.json':   cfg_defaults,
         'wifi.json': {
-            'ssid':        'Wokwi-GUEST',
+            'ssid':        '',
             'password':    '',
             'ap_ssid':     'SBRRBell_AP',
             'ap_password': '',   # generated at first boot
@@ -116,11 +116,11 @@ def main():
     bell = BellController(cfg)
     _boot_selftest(led, bell)
 
-    # WDT — falls back to no-op stub in Wokwi where machine.WDT raises
+    # WDT — falls back to no-op stub if unavailable
     try:
         wdt = WDT(timeout=cfg.get('watchdog_timeout_ms', 8388))
     except Exception:
-        print('BOOT WDT unavailable — using FakeWDT stub (Wokwi mode).')
+        print('BOOT WDT unavailable — using FakeWDT stub.')
         wdt = _FakeWDT()
     wdt.feed()
 
@@ -152,18 +152,16 @@ def main():
             print('RTC No DS3231 detected — AP-only mode with manual time only.')
     wdt.feed()
 
-    # Pre-compress dashboard — tries .html first (local), .txt for Wokwi
+    # Pre-compress dashboard
     try:
         import uzlib
         raw = None
-        for src in ('dashboard.html', 'dashboard.txt'):
-            try:
-                with open(src, 'rb') as f:
-                    raw = f.read()
-                gz_name = src.rsplit('.', 1)[0] + '.gz'
-                break
-            except OSError:
-                continue
+        try:
+            with open('dashboard.html', 'rb') as f:
+                raw = f.read()
+            gz_name = 'dashboard.html.gz'
+        except OSError:
+            pass
         if raw:
             compressed = uzlib.compress(raw)
             with open(gz_name, 'wb') as f:
@@ -267,6 +265,30 @@ def main():
         elapsed = utime.ticks_diff(utime.ticks_ms(), cycle_start)
         remain  = _LOOP_MS - elapsed
         if remain > 0:
+            utime.sleep_ms(remain)
+
+
+if __name__ == '__main__':
+    main()
+     if remain > 0:
+            utime.sleep_ms(remain)
+
+
+if __name__ == '__main__':
+    main()
+__main__':
+    main()
+_main__':
+    main()
+emain > 0:
+            utime.sleep_ms(remain)
+
+
+if __name__ == '__main__':
+    main()
+_main__':
+    main()
+emain > 0:
             utime.sleep_ms(remain)
 
 

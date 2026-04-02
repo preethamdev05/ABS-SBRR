@@ -116,17 +116,6 @@ Auth uses a SHA-256 nonce challenge:
 | `web_server.py` | HTTP dashboard server |
 | `config_manager.py` | Config + encrypted storage |
 | `dashboard.html` | Web UI |
-
-## Wokwi Simulation
-
-The included `diagram.json` uses the RP2040 Pico W (`board-pi-pico-w`) as a stand-in —
-Wokwi does not yet support the RP2350 Pico 2 W. The MicroPython code is identical on both
-chips. **For real hardware, use a Raspberry Pi Pico 2 W (RP2350).**
-
-The DS3231 RTC is not wired in the Wokwi diagram. In simulation, NTP sync
-(worldtimeapi.org) is used for timekeeping. On physical hardware, wire the DS3231 as
-shown below — the code auto-detects it on I2C and falls back gracefully if absent.
-
 ## License
 
 This project is licensed under the Apache License 2.0 — see [LICENSE](LICENSE) for details.
