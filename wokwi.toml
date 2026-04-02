@@ -1,6 +1,6 @@
 [wokwi]
 version = 1
-firmware = "firmware.uf2"
+firmware = ""
 python = true
 
 [[file]]
