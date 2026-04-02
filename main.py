@@ -166,7 +166,7 @@ def main():
             compressed = uzlib.compress(raw)
             with open(gz_name, 'wb') as f:
                 f.write(compressed)
-            print(f'BOOT Compressed {src}: {len(raw)} → {len(compressed)} bytes')
+            print(f'BOOT Compressed dashboard.html: {len(raw)} → {len(compressed)} bytes')
     except Exception as e:
         print(f'BOOT Dashboard compress: {e}')
 
@@ -265,30 +265,6 @@ def main():
         elapsed = utime.ticks_diff(utime.ticks_ms(), cycle_start)
         remain  = _LOOP_MS - elapsed
         if remain > 0:
-            utime.sleep_ms(remain)
-
-
-if __name__ == '__main__':
-    main()
-     if remain > 0:
-            utime.sleep_ms(remain)
-
-
-if __name__ == '__main__':
-    main()
-__main__':
-    main()
-_main__':
-    main()
-emain > 0:
-            utime.sleep_ms(remain)
-
-
-if __name__ == '__main__':
-    main()
-_main__':
-    main()
-emain > 0:
             utime.sleep_ms(remain)
 
 
